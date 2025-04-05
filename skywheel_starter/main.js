@@ -20,16 +20,41 @@ const road = new THREE.Mesh(
 road.position.z = -50;
 scene.add(road);
 
-// カメラ追従
+// カメラ初期位置
 camera.position.set(0, 2, 5);
 camera.lookAt(car.position);
 
+// 入力用フラグ
+let moveLeft = false;
+let moveRight = false;
 let speed = 0.2;
 
+// キー入力イベント
+document.addEventListener('keydown', (event) => {
+  if (event.key === 'ArrowLeft') moveLeft = true;
+  if (event.key === 'ArrowRight') moveRight = true;
+});
+document.addEventListener('keyup', (event) => {
+  if (event.key === 'ArrowLeft') moveLeft = false;
+  if (event.key === 'ArrowRight') moveRight = false;
+});
+
+// アニメーションループ
 function animate() {
   requestAnimationFrame(animate);
+
+  // 前進
   car.position.z -= speed;
+
+  // 左右移動
+  if (moveLeft) car.position.x -= 0.1;
+  if (moveRight) car.position.x += 0.1;
+
+  // カメラ追従
   camera.position.z = car.position.z + 5;
+  camera.position.x = car.position.x;
+  camera.lookAt(car.position);
+
   renderer.render(scene, camera);
 }
 
